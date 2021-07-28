@@ -1,7 +1,7 @@
 # Infrastructure
 
 ## About
-Infrastructure is a tool to manage infrastructure and IAM roles to help CTOs and developers.
+Infrastructure is a tool to manage cloud infrastructure and IAM roles to support tech teams.
 
 ## usage
 - `source <(setkubeconfig {COMPANY} {ENVIRONMENT})`
