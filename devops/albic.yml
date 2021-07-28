@@ -1,0 +1,104 @@
+# ALB INGRESS CONTROLLER
+version: "1"
+
+env:
+  MANIFEST_PATH: ${INFRASTRUCTURE_PATH}/manifests
+  POLICIES_PATH: ${INFRASTRUCTURE_PATH}/policies
+  POLICY_NAME: AWSLoadBalancerControllerIAMPolicy
+  INGRESS_CONTROLLER_ROLE: alb-ingress-controller
+
+options:
+  interpolation: true
+  session_clean_before: False
+  session_clean_after: False
+
+targets:
+  create-iam-service-account:
+    stages:
+      create-policy:
+        module: devops.packages2.aws.iam.create_policy
+        args: 
+          --policy-name: ${POLICY_NAME}
+          --policy-file: ${POLICIES_PATH}/alb-iam-policy.json
+          --account-id: ${ACCOUNT_ID}
+          --session-save: ALB_POLICY
+      eksctl-service-account:
+        module: devops.packages2.kubernetes.iam_service_account
+        args:
+          --action: create
+          --profile: ${ORGANIZATION_NAME}
+          --cluster: ${EKS_CLUSTER_NAME}
+          --region: ${EKS_AWS_REGION}
+          --name: ${INGRESS_CONTROLLER_ROLE}
+          --namespace: kube-system
+          --attach-policy-arn: ${ALB_POLICY}
+          --override-existing-serviceaccounts: 
+          --approve:
+        session: 
+          - ALB_POLICY
+
+  delete-iam-service-account:
+    stages:
+      eksctl-service-account:
+        module: devops.packages2.kubernetes.iam_service_account
+        args:
+          --action: delete
+          --profile: ${ORGANIZATION_NAME}
+          --cluster: ${EKS_CLUSTER_NAME}
+          --region: ${EKS_AWS_REGION}
+          --name: ${INGRESS_CONTROLLER_ROLE}
+          --namespace: kube-system
+      delete-policy:
+        before: 
+          sleep: sleep 20
+        module: devops.packages2.aws.iam.delete_policy
+        args: 
+          --policy-name: ${POLICY_NAME}
+          --account-id: ${ACCOUNT_ID}
+
+  deploy:
+    stages:
+      vpc-id:
+        module: devops.packages2.aws.awscli
+        args:
+          --action: eks
+          --profile: ${ORGANIZATION_NAME}
+          --jq-query: |
+            .cluster.resourcesVpcConfig.vpcId
+          --action-args: |
+            describe-cluster
+            --region ${EKS_AWS_REGION}
+            --output json
+            --name ${EKS_CLUSTER_NAME}
+          --session-save: AWS_VPC_ID
+      deploy-alb-vpc-id:
+        module: devops.packages2.aws.awscli
+        session:
+          - AWS_VPC_ID
+        args:
+          --action: eks
+          --profile: ${ORGANIZATION_NAME}
+          --jq-query: |
+            .cluster.resourcesVpcConfig.vpcId
+          --action-args: |
+            describe-cluster
+            --region ${EKS_AWS_REGION}
+            --output json
+            --name ${EKS_CLUSTER_NAME}
+        after:
+          deploy: | 
+            cat manifests/alb-ingress-controller-v1.1.4.yml \
+            | sed "s/# - --cluster-name=devCluster/- --cluster-name=${EKS_CLUSTER_NAME}/g" \
+            | sed "s/# - --aws-region=us-west-1/- --aws-region=${EKS_AWS_REGION}/g" \
+            | sed "s/# - --aws-vpc-id=vpc-xxxxxx/- --aws-vpc-id=${AWS_VPC_ID}/g" \
+            | kubectl apply -f -
+      
+  delete:
+    stages:
+      delete-alb:
+        module: devops.packages2.kubernetes.kubeaction
+        args: 
+          --manifest-path: ${MANIFEST_PATH}
+          --manifest-yaml: 
+            - alb-ingress-controller-v1.1.4.yml
+          --action: delete 

@@ -1,0 +1,23 @@
+version: "1"
+
+env:
+  AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+  AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+  AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+  AWS_ROLE_ARN: ${AWS_ROLE_ARN}
+
+options:
+  interpolation: true
+  session_clean_before: False
+  session_clean_after: False
+
+targets:
+  assume-role:
+    stages:
+      assume-role-iam:
+        module: devops.packages.aws.iam.assume_role
+        args: 
+          --role-arn: ${AWS_ROLE_ARN}
+          --role-session-name: assume-role-iam
+          --role-session-duration: 1200
+          --session-save: assume-role-iam

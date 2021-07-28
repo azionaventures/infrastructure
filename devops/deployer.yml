@@ -1,0 +1,63 @@
+version: "1"
+env:
+  AWS_REGION: ${EKS_AWS_REGION}
+  BUCKET_REGION: ${AWS_BUCKET_REGION}
+  DEVOPS_TERRAFORM_TEMPLATE_PATH: ${AZIONA_PREFIX}/devops/terraform
+
+targets:
+  terraform-eks-deploy-role:
+    stages:
+      init:
+        module: devops.packages2.terraform.terraform
+        args:
+          --module-name: eks-deploy-role
+          --action: init
+          --action-args: |
+            -backend-config="bucket=${ORGANIZATION_NAME}-terraform"
+            -backend-config="key=devops-terraform-eks-deploy-role-${ENVIRONMENT}/terraform.tfstate"
+            -backend-config="region=${BUCKET_REGION}"
+            -backend-config="profile=${ORGANIZATION_NAME}"
+            -backend-config="dynamodb_table=terraform-lock"
+            -reconfigure
+            -upgrade
+      apply:
+        module: devops.packages2.terraform.terraform
+        args:
+          --module-name: eks-deploy-role
+          --action: apply
+          --action-args: |
+            -auto-approve
+            -var="environment=${ENVIRONMENT}"
+            -var="eks_region=${AWS_REGION}"
+            -var="ecr_region=${AWS_REGION}"
+            -var="organization_name=${ORGANIZATION_NAME}"
+            -var="shared_credentials_file=${SHARED_CREDENTIALS_FILE}"
+            -var="profile=${ORGANIZATION_NAME}"
+  terraform-eks-destroy-role:
+    stages:
+      init:
+        module: devops.packages2.terraform.terraform
+        args:
+          --module-name: eks-deploy-role
+          --action: init
+          --action-args: |
+            -backend-config="bucket=${ORGANIZATION_NAME}-terraform"
+            -backend-config="key=devops-terraform-eks-deploy-role-${ENVIRONMENT}/terraform.tfstate"
+            -backend-config="region=${BUCKET_REGION}"
+            -backend-config="profile=${ORGANIZATION_NAME}"
+            -backend-config="dynamodb_table=terraform-lock"
+            -reconfigure
+            -upgrade
+      apply:
+        module: devops.packages2.terraform.terraform
+        args:
+          --module-name: eks-deploy-role
+          --action: destroy
+          --action-args: |
+            -auto-approve
+            -var="environment=${ENVIRONMENT}"
+            -var="eks_region=${AWS_REGION}"
+            -var="ecr_region=${AWS_REGION}"
+            -var="organization_name=${ORGANIZATION_NAME}"
+            -var="shared_credentials_file=${SHARED_CREDENTIALS_FILE}"
+            -var="profile=${ORGANIZATION_NAME}"

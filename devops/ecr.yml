@@ -1,0 +1,65 @@
+version: "1"
+
+env:
+  DEVOPS_TERRAFORM_TEMPLATE_PATH: ${AZIONA_PREFIX}/devops/terraform
+
+options:
+  interpolation: true
+  session_clean_before: False
+  session_clean_after: False
+
+targets:
+  ecr-create:
+    stages:
+      init:
+        module: devops.packages2.terraform.terraform
+        args:
+          --module-name: ecr
+          --action: init
+          --action-args: |
+            -backend-config="bucket=${ORGANIZATION_NAME}-terraform"
+            -backend-config="key=devops-terraform-ecr-${ENVIRONMENT}/terraform.tfstate"
+            -backend-config="region=${AWS_BUCKET_REGION}"
+            -backend-config="profile=${ORGANIZATION_NAME}"
+            -backend-config="dynamodb_table=terraform-lock"
+            -reconfigure
+            -upgrade
+      apply:
+        module: devops.packages2.terraform.terraform
+        args:
+          --module-name: ecr
+          --action: apply
+          --action-args: |
+            -auto-approve
+            -var="enabled=1"
+            -var="company=${ORGANIZATION_NAME}"
+            -var="shared_credentials_file=${SHARED_CREDENTIALS_FILE}"
+            -var="profile=${ORGANIZATION_NAME}"
+  ecr-destroy:
+    stages:
+      init:
+        module: devops.packages2.terraform.terraform
+        args:
+          --module-name: ecr
+          --action: init
+          --action-args: |
+            -backend-config="bucket=${ORGANIZATION_NAME}-terraform"
+            -backend-config="key=devops-terraform-ecr-${ENVIRONMENT}/terraform.tfstate"
+            -backend-config="region=${AWS_BUCKET_REGION}"
+            -backend-config="profile=${ORGANIZATION_NAME}"
+            -backend-config="dynamodb_table=terraform-lock"
+            -reconfigure
+            -upgrade
+      apply:
+        module: devops.packages2.terraform.terraform
+        args:
+          --module-name: ecr
+          --action: destroy
+          --action-args: |
+            -auto-approve
+            -var="enabled=1"
+            -var="company=${ORGANIZATION_NAME}"
+            -var="shared_credentials_file=${SHARED_CREDENTIALS_FILE}"
+            -var="profile=${ORGANIZATION_NAME}"
+
+

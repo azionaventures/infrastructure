@@ -1,0 +1,20 @@
+version: "1"
+
+options:
+  interpolation: true
+  session_clean_before: False
+  session_clean_after: False
+
+targets:
+  associate-iam-oidc-provider:
+    stages:
+      associate-iam-oidc-provider:
+        module: devops.packages2.kubernetes.eksctl
+        args:
+          --action: utils
+          --action-args: |
+            associate-iam-oidc-provider
+            --profile ${ORGANIZATION_NAME}
+            --region ${EKS_AWS_REGION}
+            --cluster ${EKS_CLUSTER_NAME}
+            --approve

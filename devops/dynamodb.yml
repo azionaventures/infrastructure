@@ -1,0 +1,21 @@
+version: "1"
+
+options:
+  interpolation: true
+  session_clean_before: False
+  session_clean_after: False
+
+targets:
+  create-cluster:
+    stages:
+      describe-public-subnets:
+          module: devops.packages2.aws.awscli
+          args:
+            --action: dynamodb
+            --action-args: |
+              create-table
+              --region eu-west-1
+              --table-name terraform-lock
+              --attribute-definitions AttributeName=LockID,AttributeType=S
+              --key-schema AttributeName=LockID,KeyType=HASH
+              --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1

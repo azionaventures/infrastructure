@@ -1,0 +1,61 @@
+# NGINX INGRESS CONTROLLER
+version: "1"
+
+env:
+  MANIFEST_PATH: ${INFRASTRUCTURE_PATH}/manifests
+
+options:
+  interpolation: true
+  session_clean_before: False
+  session_clean_after: False
+
+# helm repo add hkube http://hkube.io/helm/
+targets:
+  deploy:
+    stages:
+      deploy-nginx-ingress-controller:
+        module: devops.packages2.kubernetes.helm
+        args:
+          --action: upgrade
+          --action-args: |
+            -i nginx-ingress 
+            hkube/nginx-ingress
+            --version 1.31.1001
+            --set-string controller.service.externalTrafficPolicy=Local
+            --set-string controller.service.type=NodePort
+            --set controller.publishService.enabled=true
+            --set serviceAccount.create=true
+            --set rbac.create=true
+            --set-string controller.config.server-tokens=false
+            --set-string controller.config.use-proxy-protocol=false
+            --set-string controller.config.compute-full-forwarded-for=true
+            --set-string controller.config.use-forwarded-headers=true
+            --set controller.metrics.enabled=true
+            --set controller.autoscaling.maxReplicas=5
+            --set controller.autoscaling.minReplicas=2
+            --set controller.autoscaling.enabled=true
+            --namespace kube-system
+            -f ${MANIFEST_PATH}/nginx-values.yaml  
+      deploy-nginx-ingress-alb:
+        module: devops.packages2.kubernetes.kubeaction
+        args: 
+          --manifest-path: ${MANIFEST_PATH}
+          --manifest-yaml: 
+            - alb-ingress-connect-nginx.yaml
+          --action: apply 
+  delete:
+    stages:
+      uninstall-nginx-ingress-controller:
+        module: devops.packages2.kubernetes.helm
+        args:
+          --action: uninstall
+          --action-args: |
+            nginx-ingress 
+            --namespace kube-system
+      delete-nginx-ingress-alb:
+        module: devops.packages2.kubernetes.kubeaction
+        args: 
+          --manifest-path: ${MANIFEST_PATH}
+          --manifest-yaml: 
+            - alb-ingress-connect-nginx.yaml
+          --action: delete 

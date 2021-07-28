@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1 
+kind: Ingress 
+metadata: 
+  annotations: 
+    alb.ingress.kubernetes.io/certificate-arn: ${NGINX_INGRESS_CERTIFICATE}
+    alb.ingress.kubernetes.io/healthcheck-path: /healthz 
+    alb.ingress.kubernetes.io/scheme: ${NGINX_INGRESS_SCHEME}
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS":443}]'
+    alb.ingress.kubernetes.io/target-type: ip 
+    alb.ingress.kubernetes.io/tags: ManagedBy=ALBController,LB=Nginx,Type=DevOps,Environment=${ENVIRONMENT}
+    # alb.ingress.kubernetes.io/subnets: <subnets> 
+    kubernetes.io/ingress.class: alb  
+  name: alb-ingress-connect-nginx 
+  namespace: kube-system 
+spec: 
+  rules: 
+    - http: 
+        paths: 
+          - backend: 
+              serviceName: nginx-ingress-controller 
+              servicePort: 80 
+            path: /* 

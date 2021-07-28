@@ -1,0 +1,61 @@
+# FARGATE ROLE
+
+version: "1"
+
+env:
+  POLICIES_PATH: ${INFRASTRUCTURE_PATH}/policies
+  FARGATE_ROLE_NAME: AmazonEKSFargatePodExecutionRole
+  POLICY_NAME_TO_ATTACH: AmazonEKSFargatePodExecutionRolePolicy
+
+options:
+  interpolation: true
+  session_clean_before: False
+  session_clean_after: False
+
+targets:
+  create-role:
+    stages:
+      create-role:
+        module: devops.packages2.aws.iam.create_role
+        args:
+          --role-name: ${FARGATE_ROLE_NAME}
+          --assumed-role-policy-document: ${POLICIES_PATH}/trust-relationship.json
+      attach-role-policy:
+        module: devops.packages2.aws.awscli
+        args:
+          --action: iam
+          --action-args: | 
+            attach-role-policy
+            --role-name ${FARGATE_ROLE_NAME}
+            --policy-arn arn:aws:iam::aws:policy/${POLICY_NAME_TO_ATTACH}
+            --output json
+  delete-role:
+    stages:
+      detach-role-policy:
+        module: devops.packages2.aws.awscli
+        args:
+          --action: iam
+          --action-args: | 
+            detach-role-policy
+            --role-name ${FARGATE_ROLE_NAME}
+            --policy-arn arn:aws:iam::aws:policy/${POLICY_NAME_TO_ATTACH}
+            --output json
+      delete-role:
+        module: devops.packages2.aws.iam.delete_role
+        args:
+          --role-name: ${FARGATE_ROLE_NAME}
+  list-policies:
+    stages:
+      list-policies:
+        module: devops.packages2.aws.awscli
+        args:
+          --action: iam
+          --jq-query: |
+            .[][] | 
+            select(.PolicyName==\"${POLICY_NAME_FILTER}\") | 
+            .Arn
+          --action-args: | 
+            list-policies
+            --output json
+    env:
+      POLICY_NAME_FILTER: ${POLICY_NAME_TO_ATTACH}

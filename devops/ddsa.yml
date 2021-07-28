@@ -1,0 +1,63 @@
+# DATADOG SERVICE ACCOUNT
+
+version: "1"
+
+env:
+  MANIFEST_PATH: ${INFRASTRUCTURE_PATH}/manifests
+  POLICIES_PATH: ${INFRASTRUCTURE_PATH}/policies
+  SERVICE_ACCOUNT_NAME: logger
+
+options:
+  interpolation: true
+  session_clean_before: False
+  session_clean_after: False
+
+targets:
+  create-iam-service-account:
+    stages:
+      eksctl-service-account:
+        module: devops.packages2.kubernetes.iam_service_account
+        args:
+          --action: create
+          --profile: ${ORGANIZATION_NAME}
+          --cluster: ${EKS_CLUSTER_NAME}
+          --region: ${EKS_AWS_REGION}
+          --name: ${SERVICE_ACCOUNT_NAME}
+          --namespace: default
+          --attach-policy-arn: arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+          --override-existing-serviceaccounts: 
+          --approve:
+
+  delete-iam-service-account:
+    stages:
+      eksctl-service-account:
+        module: devops.packages2.kubernetes.iam_service_account
+        args:
+          --action: delete
+          --profile: ${ORGANIZATION_NAME}
+          --cluster: ${EKS_CLUSTER_NAME}
+          --region: ${EKS_AWS_REGION}
+          --name: ${SERVICE_ACCOUNT_NAME}
+          --namespace: kube-default
+
+  deploy:
+    stages:
+      deploy-dd-manifests:
+        module: devops.packages2.kubernetes.kubeaction
+        args: 
+          --manifest-path: ${MANIFEST_PATH}
+          --manifest-yaml: 
+            - metrics-components.yaml
+            - datadog-serviceaccount.yaml
+          --action: apply 
+      
+  delete:
+    stages:
+      delete-dd-manifests:
+        module: devops.packages2.kubernetes.kubeaction
+        args: 
+          --manifest-path: ${MANIFEST_PATH}
+          --manifest-yaml:
+            - metrics-components.yaml
+            - datadog-serviceaccount.yaml
+          --action: delete 
