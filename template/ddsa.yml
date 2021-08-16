@@ -16,7 +16,7 @@ targets:
   create-iam-service-account:
     stages:
       eksctl-service-account:
-        module: devops.packages2.kubernetes.iam_service_account
+        module: aziona.packages.kubernetes.iam_service_account
         args:
           --action: create
           --profile: ${ORGANIZATION_NAME}
@@ -31,7 +31,7 @@ targets:
   delete-iam-service-account:
     stages:
       eksctl-service-account:
-        module: devops.packages2.kubernetes.iam_service_account
+        module: aziona.packages.kubernetes.iam_service_account
         args:
           --action: delete
           --profile: ${ORGANIZATION_NAME}
@@ -43,7 +43,7 @@ targets:
   deploy:
     stages:
       deploy-dd-manifests:
-        module: devops.packages2.kubernetes.kubeaction
+        module: aziona.packages.kubernetes.kubeaction
         args: 
           --manifest-path: ${MANIFEST_PATH}
           --manifest-yaml: 
@@ -54,7 +54,7 @@ targets:
   delete:
     stages:
       delete-dd-manifests:
-        module: devops.packages2.kubernetes.kubeaction
+        module: aziona.packages.kubernetes.kubeaction
         args: 
           --manifest-path: ${MANIFEST_PATH}
           --manifest-yaml:

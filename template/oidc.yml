@@ -9,7 +9,7 @@ targets:
   associate-iam-oidc-provider:
     stages:
       associate-iam-oidc-provider:
-        module: devops.packages2.kubernetes.eksctl
+        module: aziona.packages.kubernetes.eksctl
         args:
           --action: utils
           --action-args: |

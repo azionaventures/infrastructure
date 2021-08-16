@@ -13,7 +13,7 @@ targets:
   create-cluster:
     stages:
       describe-public-subnets:
-          module: devops.packages2.aws.awscli
+          module: aziona.packages.aws.awscli
           before:
             echo: echo ${EKS_CLUSTER_NAME} ${EKS_K8S_VERSION} ${ENVIRONMENT}
           args:
@@ -30,7 +30,7 @@ targets:
               describe-subnets
               --output json
       describe-private-subnets:
-          module: devops.packages2.aws.awscli
+          module: aziona.packages.aws.awscli
           args:
             --action: ec2
             --xargs:
@@ -45,7 +45,7 @@ targets:
               describe-subnets
               --output json
       create-cluster:
-        module: devops.packages2.kubernetes.eksctl
+        module: aziona.packages.kubernetes.eksctl
         session:
           - EKS_VPC_PRIVATE_SUBNETS
           - EKS_VPC_PUBLIC_SUBNETS
@@ -64,7 +64,7 @@ targets:
       delete-cluster:
         before:
           delete: kubectl delete deployments --all
-        module: devops.packages2.kubernetes.eksctl
+        module: aziona.packages.kubernetes.eksctl
         args:
           --action: delete
           --action-args: |
@@ -74,7 +74,7 @@ targets:
   kubetest:
     stages:
       assume-role-iam:
-        module: devops.packages2.aws.iam.assume_role
+        module: aziona.packages.aws.iam.assume_role
         args: 
           --role-arn: ${AWS_ROLE_ARN}
           --role-session-name: assume-role-iam
@@ -95,7 +95,7 @@ targets:
   kubeconfig-role:
     stages:
       assume-role-iam:
-        module: devops.packages2.aws.iam.assume_role
+        module: aziona.packages.aws.iam.assume_role
         args: 
           --role-arn: ${AWS_ROLE_ARN}
           --role-session-name: assume-role-iam
@@ -109,7 +109,7 @@ targets:
   kubeconfig-s3:
     stages:
       assume-role-iam:
-        module: devops.packages2.aws.iam.assume_role
+        module: aziona.packages.aws.iam.assume_role
         args: 
           --role-arn: ${AWS_ROLE_ARN}
           --role-session-name: assume-role-iam

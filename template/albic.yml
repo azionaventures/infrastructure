@@ -16,14 +16,14 @@ targets:
   create-iam-service-account:
     stages:
       create-policy:
-        module: devops.packages2.aws.iam.create_policy
+        module: aziona.packages.aws.iam.create_policy
         args: 
           --policy-name: ${POLICY_NAME}
           --policy-file: ${POLICIES_PATH}/alb-iam-policy.json
           --account-id: ${ACCOUNT_ID}
           --session-save: ALB_POLICY
       eksctl-service-account:
-        module: devops.packages2.kubernetes.iam_service_account
+        module: aziona.packages.kubernetes.iam_service_account
         args:
           --action: create
           --profile: ${ORGANIZATION_NAME}
@@ -40,7 +40,7 @@ targets:
   delete-iam-service-account:
     stages:
       eksctl-service-account:
-        module: devops.packages2.kubernetes.iam_service_account
+        module: aziona.packages.kubernetes.iam_service_account
         args:
           --action: delete
           --profile: ${ORGANIZATION_NAME}
@@ -51,7 +51,7 @@ targets:
       delete-policy:
         before: 
           sleep: sleep 20
-        module: devops.packages2.aws.iam.delete_policy
+        module: aziona.packages.aws.iam.delete_policy
         args: 
           --policy-name: ${POLICY_NAME}
           --account-id: ${ACCOUNT_ID}
@@ -59,7 +59,7 @@ targets:
   deploy:
     stages:
       vpc-id:
-        module: devops.packages2.aws.awscli
+        module: aziona.packages.aws.awscli
         args:
           --action: eks
           --profile: ${ORGANIZATION_NAME}
@@ -72,7 +72,7 @@ targets:
             --name ${EKS_CLUSTER_NAME}
           --session-save: AWS_VPC_ID
       deploy-alb-vpc-id:
-        module: devops.packages2.aws.awscli
+        module: aziona.packages.aws.awscli
         session:
           - AWS_VPC_ID
         args:
@@ -96,7 +96,7 @@ targets:
   delete:
     stages:
       delete-alb:
-        module: devops.packages2.kubernetes.kubeaction
+        module: aziona.packages.kubernetes.kubeaction
         args: 
           --manifest-path: ${MANIFEST_PATH}
           --manifest-yaml: 

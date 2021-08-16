@@ -14,7 +14,7 @@ targets:
   deploy:
     stages:
       deploy-nginx-ingress-controller:
-        module: devops.packages2.kubernetes.helm
+        module: aziona.packages.kubernetes.helm
         args:
           --action: upgrade
           --action-args: |
@@ -37,7 +37,7 @@ targets:
             --namespace kube-system
             -f ${MANIFEST_PATH}/nginx-values.yaml  
       deploy-nginx-ingress-alb:
-        module: devops.packages2.kubernetes.kubeaction
+        module: aziona.packages.kubernetes.kubeaction
         args: 
           --manifest-path: ${MANIFEST_PATH}
           --manifest-yaml: 
@@ -46,14 +46,14 @@ targets:
   delete:
     stages:
       uninstall-nginx-ingress-controller:
-        module: devops.packages2.kubernetes.helm
+        module: aziona.packages.kubernetes.helm
         args:
           --action: uninstall
           --action-args: |
             nginx-ingress 
             --namespace kube-system
       delete-nginx-ingress-alb:
-        module: devops.packages2.kubernetes.kubeaction
+        module: aziona.packages.kubernetes.kubeaction
         args: 
           --manifest-path: ${MANIFEST_PATH}
           --manifest-yaml: 

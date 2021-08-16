@@ -12,7 +12,7 @@ targets:
   ecr-create:
     stages:
       init:
-        module: devops.packages2.terraform.terraform
+        module: aziona.packages.terraform.terraform
         args:
           --module-name: ecr
           --action: init
@@ -25,7 +25,7 @@ targets:
             -reconfigure
             -upgrade
       apply:
-        module: devops.packages2.terraform.terraform
+        module: aziona.packages.terraform.terraform
         args:
           --module-name: ecr
           --action: apply
@@ -38,7 +38,7 @@ targets:
   ecr-destroy:
     stages:
       init:
-        module: devops.packages2.terraform.terraform
+        module: aziona.packages.terraform.terraform
         args:
           --module-name: ecr
           --action: init
@@ -51,7 +51,7 @@ targets:
             -reconfigure
             -upgrade
       apply:
-        module: devops.packages2.terraform.terraform
+        module: aziona.packages.terraform.terraform
         args:
           --module-name: ecr
           --action: destroy

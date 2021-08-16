@@ -3,6 +3,13 @@
 ## About
 Infrastructure is a tool to manage cloud infrastructure and IAM roles to support tech teams.
 
+## requirements
+- clone aziona-cli in `AZIONA_PREFIX` path
+- clone azione-cli-terraform in `AZIONA_PREFIX` path
+- eksctl 0.56.0
+- install helm
+- helm repo add hkube http://hkube.io/helm/
+
 ## usage
 - `source <(setkubeconfig {COMPANY} {ENVIRONMENT})`
 - `infra template -vv devops-target`
