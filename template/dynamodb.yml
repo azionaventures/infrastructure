@@ -9,7 +9,7 @@ targets:
   create-cluster:
     stages:
       describe-public-subnets:
-          module: devops.packages2.aws.awscli
+          module: aziona.packages.aws.awscli
           args:
             --action: dynamodb
             --action-args: |

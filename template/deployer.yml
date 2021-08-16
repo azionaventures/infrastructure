@@ -2,15 +2,15 @@ version: "1"
 env:
   AWS_REGION: ${EKS_AWS_REGION}
   BUCKET_REGION: ${AWS_BUCKET_REGION}
-  DEVOPS_TERRAFORM_TEMPLATE_PATH: ${AZIONA_PREFIX}/devops/terraform
+  TERRAFORM_MODULE: ${AZIONA_PREFIX}/aziona-cli-terraform/modules/eks-deploy-role
 
 targets:
   terraform-eks-deploy-role:
     stages:
       init:
-        module: devops.packages2.terraform.terraform
+        module: aziona.packages.terraform.terraform
         args:
-          --module-name: eks-deploy-role
+          --module-path: ${TERRAFORM_MODULE}
           --action: init
           --action-args: |
             -backend-config="bucket=${ORGANIZATION_NAME}-terraform"
@@ -21,9 +21,9 @@ targets:
             -reconfigure
             -upgrade
       apply:
-        module: devops.packages2.terraform.terraform
+        module: aziona.packages.terraform.terraform
         args:
-          --module-name: eks-deploy-role
+          --module-path: ${TERRAFORM_MODULE}
           --action: apply
           --action-args: |
             -auto-approve
@@ -36,9 +36,9 @@ targets:
   terraform-eks-destroy-role:
     stages:
       init:
-        module: devops.packages2.terraform.terraform
+        module: aziona.packages.terraform.terraform
         args:
-          --module-name: eks-deploy-role
+          --module-path: ${TERRAFORM_MODULE}
           --action: init
           --action-args: |
             -backend-config="bucket=${ORGANIZATION_NAME}-terraform"
@@ -49,9 +49,9 @@ targets:
             -reconfigure
             -upgrade
       apply:
-        module: devops.packages2.terraform.terraform
+        module: aziona.packages.terraform.terraform
         args:
-          --module-name: eks-deploy-role
+          --module-path: ${TERRAFORM_MODULE}
           --action: destroy
           --action-args: |
             -auto-approve

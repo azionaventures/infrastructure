@@ -16,12 +16,12 @@ targets:
   create-role:
     stages:
       create-role:
-        module: devops.packages2.aws.iam.create_role
+        module: aziona.packages.aws.iam.create_role
         args:
           --role-name: ${FARGATE_ROLE_NAME}
           --assumed-role-policy-document: ${POLICIES_PATH}/trust-relationship.json
       attach-role-policy:
-        module: devops.packages2.aws.awscli
+        module: aziona.packages.aws.awscli
         args:
           --action: iam
           --action-args: | 
@@ -32,7 +32,7 @@ targets:
   delete-role:
     stages:
       detach-role-policy:
-        module: devops.packages2.aws.awscli
+        module: aziona.packages.aws.awscli
         args:
           --action: iam
           --action-args: | 
@@ -41,13 +41,13 @@ targets:
             --policy-arn arn:aws:iam::aws:policy/${POLICY_NAME_TO_ATTACH}
             --output json
       delete-role:
-        module: devops.packages2.aws.iam.delete_role
+        module: aziona.packages.aws.iam.delete_role
         args:
           --role-name: ${FARGATE_ROLE_NAME}
   list-policies:
     stages:
       list-policies:
-        module: devops.packages2.aws.awscli
+        module: aziona.packages.aws.awscli
         args:
           --action: iam
           --jq-query: |

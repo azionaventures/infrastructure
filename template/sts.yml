@@ -15,7 +15,7 @@ targets:
   assume-role:
     stages:
       assume-role-iam:
-        module: devops.packages.aws.iam.assume_role
+        module: aziona.packages.aws.iam.assume_role
         args: 
           --role-arn: ${AWS_ROLE_ARN}
           --role-session-name: assume-role-iam
