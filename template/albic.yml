@@ -87,7 +87,7 @@ targets:
             --name ${EKS_CLUSTER_NAME}
         after:
           deploy: | 
-            cat manifests/alb-ingress-controller-v1.1.4.yml \
+            cat ${MANIFEST_PATH}/alb-ingress-controller-v1.1.4.yml \
             | sed "s/# - --cluster-name=devCluster/- --cluster-name=${EKS_CLUSTER_NAME}/g" \
             | sed "s/# - --aws-region=us-west-1/- --aws-region=${EKS_AWS_REGION}/g" \
             | sed "s/# - --aws-vpc-id=vpc-xxxxxx/- --aws-vpc-id=${AWS_VPC_ID}/g" \
