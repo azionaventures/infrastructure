@@ -74,12 +74,11 @@ targets:
   kubetest:
     stages:
       assume-role-iam:
-        module: aziona.packages.aws.iam.assume_role
-        args: 
-          --role-arn: ${AWS_ROLE_ARN}
-          --role-session-name: assume-role-iam
-          --role-session-duration: 1200
-          --session-save: assume-role-iam
+        module: aziona.packages.aziona
+        args:
+          --module-git: git@github.com:azionaventures/aziona-assume-role.git
+          --action: assume-role-iam
+          --env: 'AWS_ROLE_ARN=arn:aws:iam::${ACCOUNT_ID}:role/eks-deployer-role-${ENVIRONMENT}'
       kubeconfg:
         session: 
           - assume-role-iam
@@ -95,12 +94,11 @@ targets:
   kubeconfig-role:
     stages:
       assume-role-iam:
-        module: aziona.packages.aws.iam.assume_role
-        args: 
-          --role-arn: ${AWS_ROLE_ARN}
-          --role-session-name: assume-role-iam
-          --role-session-duration: 1200
-          --session-save: assume-role-iam
+        module: aziona.packages.aziona
+        args:
+          --module-git: git@github.com:azionaventures/aziona-assume-role.git
+          --action: assume-role-iam
+          --env: 'AWS_ROLE_ARN=arn:aws:iam::${ACCOUNT_ID}:role/eks-deployer-role-${ENVIRONMENT}'
       kubeconfig:
         session: 
           - assume-role-iam
@@ -109,11 +107,10 @@ targets:
   kubeconfig-s3:
     stages:
       assume-role-iam:
-        module: aziona.packages.aws.iam.assume_role
-        args: 
-          --role-arn: ${AWS_ROLE_ARN}
-          --role-session-name: assume-role-iam
-          --role-session-duration: 1200
-          --session-save: assume-role-iam
+        module: aziona.packages.aziona
+        args:
+          --module-git: git@github.com:azionaventures/aziona-assume-role.git
+          --action: assume-role-iam
+          --env: 'AWS_ROLE_ARN=arn:aws:iam::${ACCOUNT_ID}:role/eks-deployer-role-${ENVIRONMENT}'
         after:
           s3cp: aws s3 cp ${KUBECONFIG} s3://${KUBECONFIG_S3_BUCKET_LOCATION}/${EKS_CLUSTER_NAME}

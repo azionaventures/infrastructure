@@ -15,7 +15,8 @@ targets:
       init:
         module: aziona.packages.terraform.terraform
         args:
-          --module-path: ${TERRAFORM_MODULE}
+          --module-git: git@github.com:azionaventures/aziona-cli-terraform.git
+          --path-to-module: 'modules/vpc'
           --action: init
           --action-args: |
             -backend-config="bucket=${ORGANIZATION_NAME}-terraform"
@@ -28,7 +29,8 @@ targets:
       apply:
         module: aziona.packages.terraform.terraform
         args:
-          --module-path: ${TERRAFORM_MODULE}
+          --module-git: git@github.com:azionaventures/aziona-cli-terraform.git
+          --path-to-module: 'modules/vpc'
           --action: apply
           --action-args: |
             -auto-approve
@@ -44,7 +46,8 @@ targets:
       init:
         module: aziona.packages.terraform.terraform
         args:
-          --module-path: ${TERRAFORM_MODULE}
+          --module-git: git@github.com:azionaventures/aziona-cli-terraform.git
+          --path-to-module: 'modules/vpc'
           --action: init
           --action-args: |
             -backend-config="bucket=${ORGANIZATION_NAME}-terraform"
@@ -57,7 +60,8 @@ targets:
       apply:
         module: aziona.packages.terraform.terraform
         args:
-          --module-path: ${TERRAFORM_MODULE}
+          --module-git: git@github.com:azionaventures/aziona-cli-terraform.git
+          --path-to-module: 'modules/vpc'
           --action: destroy
           --action-args: |
             -auto-approve
