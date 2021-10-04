@@ -28,6 +28,7 @@ targets:
               \"--vpc-public-subnets=\"+.SubnetId
             --action-args: | 
               describe-subnets
+              --region ${EKS_AWS_REGION}
               --output json
       describe-private-subnets:
           module: aziona.packages.aws.awscli
@@ -43,6 +44,7 @@ targets:
               \"--vpc-private-subnets=\"+.SubnetId
             --action-args: | 
               describe-subnets
+              --region ${EKS_AWS_REGION}
               --output json
       create-cluster:
         module: aziona.packages.kubernetes.eksctl
