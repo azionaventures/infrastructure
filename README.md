@@ -46,13 +46,13 @@ Infrastructure is a tool to manage cloud infrastructure and IAM roles to support
     - `aziona-infra -t nxic deploy`
     - `aziona-infra -t ddsa create-iam-service-account deploy`
 - destroy sequence
-    - `aziona-infra ddsa delete delete-iam-service-account`
-    - `aziona-infra nxic delete`
-    - `aziona-infra albic delete delete-iam-service-account` 
-    - `aziona-infra eks delete-cluster`
-    - `aziona-infra deployer terraform-eks-destroy-role`
-    - `aziona-infra fargate delete-role`
-    - `aziona-infra vpc vpc-destroy`
+    - `aziona-infra -t ddsa delete delete-iam-service-account`
+    - `aziona-infra -t nxic delete`
+    - `aziona-infra -t albic delete delete-iam-service-account` 
+    - `aziona-infra -t eks delete-cluster`
+    - `aziona-infra -t deployer terraform-eks-destroy-role`
+    - `aziona-infra -t fargate delete-role`
+    - `aziona-infra -t vpc vpc-destroy`
 
 
 creazione del certifoicato eksctl
