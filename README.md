@@ -3,10 +3,24 @@
 ## About
 Infrastructure is a tool to manage cloud infrastructure and IAM roles to support tech teams.
 
-## requirements
+## Requirements
 - install azionacli
 - install helm
-- helm repo add hkube http://hkube.io/helm/
+
+## Install req.
+
+    # Install - aziona-cli
+
+    git clone https://github.com/azionaventures/aziona-cli
+
+    # Install - HELM
+
+    curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+    sudo apt-get install apt-transport-https --yes
+    echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+    sudo apt-get update
+    sudo apt-get install helm
+    helm repo add hkube http://hkube.io/helm/
 
 ## usage
 
