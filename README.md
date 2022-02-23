@@ -32,27 +32,27 @@ Infrastructure is a tool to manage cloud infrastructure and IAM roles to support
 
 ## usage
 
-1. Creazione repository tenant-settings. La repo deve contenere una o più cartelle, che contengono ognuna il proprio file .env
-2. Creazione bucket S3
-3. Creazione Certificato SSL (per nginx ingress controll)
-4. Creazione table Dynamo DB
-    nome: terraform-lock
-    partizione: LockID
-5. Eseguire i comandi sequenzialmente:
+1. Create tenant-settings repository. The repo must contain one or more folders, each containing its own .env file
+2. S3 bucket creation
+3. SSL Certificate creation (for nginx ingress controll)
+4. Dynamo DB table creation
+    name: terraform-lock
+    partition: LockID
+5. Run the commands sequentially:
 - `source aziona-activate -e ENV -c COMAPNY --aws-profile AWS_PROFILE --env-only`
 - `export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile AWS_PROFILE)`
 - `export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile AWS_PROFILE)`
 - `export AZIONA_WORKSPACE_INFRASTRUCTURE=$(pwd)`
 - init sequence
-    - `aziona-infra sts assume-role` (optional) Assumi il ruolo che ha la seguente Policy ...  
-    - `aziona-infra -t vpc vpc-create` (req.) Crea la VPC per la gestione del cluster Multi-AZ.
-    - `aziona-infra -t fargate create-role` (req.) Crea il ruolo fargate con la policy (default aws) AmazonEKSFargatePodExecutionRolePolicy
-    - `aziona-infra -t deployer terraform-eks-deploy-role` (req.) Crea il ruolo per accedere al cluster (utilizzabile da terminale o per eseguire le pipeline di deploy)
-    - `aziona-infra -t eks create-cluster kubeconfig` (req.) Crea il cluster di eks e i profili associandogli i ruoli fargate (creati in precedenza), e successivamente, crea il certificato per accedere al cluster
-    - `aziona-infra -t oidc associate-iam-oidc-provider` (req.) Crea il bridge tra il cluster eks e le API di aws
-    - `aziona-infra -t albic create-iam-service-account deploy` (req.) Crea la policy nel service account che consentirà al ALB Controller di creare gli ALB su AWS per ogni ingress (deployato nel cluster e che richiede un ALB). Successivamente effettua il deploy del pod ALB Controller sul cluster (nel namespace kube-system)
-    - `aziona-infra -t nxic deploy` (req.) Crea l'nginx ingress controller e il nginx backend (il load balancer). Ogni volta che viene aggiunto un ingress di con annotation nginx al cluster l'nginx ingress controller aggiorna l'nginx backend. 
-    - `aziona-infra -t ddsa create-iam-service-account deploy` (req.) Crea il service account per effettuare lo stream delle metriche del cluster a datadog. Successivamente effettua il deploy di un pod chiamato metrics-server che serve per raccogliere le metriche dei pod e container presenti sul cluster
+    - `aziona-infra sts assume-role` (optional) Assume the role that has the following Policy ...  
+    - `aziona-infra -t vpc vpc-create` (req.) Creates the VPC for managing the Multi-AZ cluster.
+    - `aziona-infra -t fargate create-role` (req.) Creates the fargate role with policy (default aws) AmazonEKSFargatePodExecutionRolePolicy
+    - `aziona-infra -t deployer terraform-eks-deploy-role` (req.) Creates the role to access the cluster (usable from terminal or to run deployment pipelines)
+    - `aziona-infra -t eks create-cluster kubeconfig` (req.) Creates the eks cluster and profiles by associating the fargate roles (created earlier), and then, creates the certificate to access the cluster
+    - `aziona-infra -t oidc associate-iam-oidc-provider` (req.) Creates the bridge between the eks cluster and the aws API
+    - `aziona-infra -t albic create-iam-service-account deploy` (req.) Creates the policy in the service account that will allow the ALB Controller to create ALBs on AWS for each ingress (deployed to the cluster and requiring an ALB). It then deploys the ALB Controller pod to the cluster (in the kube-system namespace)
+    - `aziona-infra -t nxic deploy` (req.) Creates the nginx ingress controller and the nginx backend (the load balancer). Whenever an ingress of with nginx annotation is added to the cluster the nginx ingress controller updates the nginx backend. 
+    - `aziona-infra -t ddsa create-iam-service-account deploy` (req.) Creates the service account to stream cluster metrics to datadog. It then deploys a pod called metrics-server which is used to collect metrics from pods and containers on the cluster.
 - destroy sequence
     - `aziona-infra -t ddsa delete delete-iam-service-account`
     - `aziona-infra -t nxic delete`
@@ -63,5 +63,6 @@ Infrastructure is a tool to manage cloud infrastructure and IAM roles to support
     - `aziona-infra -t vpc vpc-destroy`
 
 
-creazione del certifoicato eksctl
-    - `aziona-infra kubeconfig`
+
+eksctl-certificate creation
+    - action-infra kubeconfig
