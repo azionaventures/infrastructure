@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1 
+apiVersion: networking.k8s.io/v1
 kind: Ingress 
 metadata: 
   annotations: 
@@ -16,7 +16,10 @@ spec:
   rules: 
     - http: 
         paths: 
-          - backend: 
-              serviceName: nginx-ingress-controller 
-              servicePort: 80 
-            path: /* 
+          - path: /* 
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-ingress-controller
+                port:
+                  number: 80

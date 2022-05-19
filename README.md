@@ -29,6 +29,7 @@ Infrastructure is a tool to manage cloud infrastructure and IAM roles to support
     
     # 3. Add helm repo
     helm repo add hkube http://hkube.io/helm/
+    helm repo add bitnami https://charts.bitnami.com/bitnami
 
 ## usage
 
@@ -63,5 +64,14 @@ Infrastructure is a tool to manage cloud infrastructure and IAM roles to support
 
 
 
-eksctl-certificate creation
-    - action-infra kubeconfig
+eksctl create iamidentitymapping --cluster jobtech-staging-1-22 --arn arn:aws:iam::039794779361:user/fabrizio.cafolla.jobtech --group system:masters --username fabrizio.cafolla.jobtech
+
+eksctl create iamidentitymapping --cluster jobtech-staging-1-22 --region eu-central-1 --arn arn:aws:iam::039794779361:user/giacomo.petrucci --group system:masters --username giacomo.petrucci
+
+eksctl create iamidentitymapping --cluster jobtech-staging-1-22 --arn arn:aws:iam::039794779361:role/eks-console-staging --group system:masters --username eks-console-staging
+
+eksctl create iamidentitymapping --cluster jobtech-staging-1-22 --arn arn:aws:iam::039794779361:role/eks-deployer-role-staging-1-22 --group system:masters --username eks-deployer-role-staging-1-22
+
+eksctl get iamidentitymapping --cluster jobtech-staging-1-22 --region eu-central-1
+
+kubectl get -n kube-system configmap/aws-auth -o yaml

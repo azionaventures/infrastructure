@@ -3,7 +3,7 @@
 version: "1"
 
 env:
-  POLICIES_PATH: ${INFRASTRUCTURE_PATH}/policies
+  POLICIES_PATH: ${PROJECT_INFRASTRUCTURE}/policies
   FARGATE_ROLE_NAME: AmazonEKSFargatePodExecutionRole
   POLICY_NAME_TO_ATTACH: AmazonEKSFargatePodExecutionRolePolicy
 

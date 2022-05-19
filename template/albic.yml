@@ -2,10 +2,11 @@
 version: "1"
 
 env:
-  MANIFEST_PATH: ${INFRASTRUCTURE_PATH}/manifests
-  POLICIES_PATH: ${INFRASTRUCTURE_PATH}/policies
+  MANIFEST_PATH: ${PROJECT_INFRASTRUCTURE}/manifests
+  POLICIES_PATH: ${PROJECT_INFRASTRUCTURE}/policies
   POLICY_NAME: AWSLoadBalancerControllerIAMPolicy
   INGRESS_CONTROLLER_ROLE: alb-ingress-controller
+  ALB_VERSION: v2.4.1 #v1.1.4
 
 options:
   interpolation: true
@@ -19,7 +20,7 @@ targets:
         module: aziona.packages.aws.iam.create_policy
         args: 
           --policy-name: ${POLICY_NAME}
-          --policy-file: ${POLICIES_PATH}/alb-iam-policy.json
+          --policy-file: ${POLICIES_PATH}/alb-iam-policy-v2.json
           --account-id: ${ACCOUNT_ID}
           --session-save: ALB_POLICY
       eksctl-service-account:
@@ -87,7 +88,7 @@ targets:
             --name ${EKS_CLUSTER_NAME}
         after:
           deploy: | 
-            cat ${MANIFEST_PATH}/alb-ingress-controller-v1.1.4.yml \
+            cat ${MANIFEST_PATH}/alb-ingress-controller-${ALB_VERSION}.yml \
             | sed "s/# - --cluster-name=devCluster/- --cluster-name=${EKS_CLUSTER_NAME}/g" \
             | sed "s/# - --aws-region=us-west-1/- --aws-region=${EKS_AWS_REGION}/g" \
             | sed "s/# - --aws-vpc-id=vpc-xxxxxx/- --aws-vpc-id=${AWS_VPC_ID}/g" \

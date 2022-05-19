@@ -2,7 +2,7 @@
 version: "1"
 
 env:
-  MANIFEST_PATH: ${INFRASTRUCTURE_PATH}/manifests
+  MANIFEST_PATH: ${PROJECT_INFRASTRUCTURE}/manifests
 
 options:
   interpolation: true
@@ -19,21 +19,17 @@ targets:
           --action: upgrade
           --action-args: |
             -i nginx-ingress 
-            hkube/nginx-ingress
-            --version 1.31.1001
-            --set-string controller.service.externalTrafficPolicy=Local
-            --set-string controller.service.type=NodePort
-            --set controller.publishService.enabled=true
+            bitnami/nginx-ingress-controller
+            --version 9.2.0
+            --set-string service.externalTrafficPolicy=Local
+            --set containerSecurityContext.allowPrivilegeEscalation=false
+            --set publishService.enabled=true
             --set serviceAccount.create=true
             --set rbac.create=true
-            --set-string controller.config.server-tokens=false
-            --set-string controller.config.use-proxy-protocol=false
-            --set-string controller.config.compute-full-forwarded-for=true
-            --set-string controller.config.use-forwarded-headers=true
-            --set controller.metrics.enabled=true
-            --set controller.autoscaling.maxReplicas=5
-            --set controller.autoscaling.minReplicas=2
-            --set controller.autoscaling.enabled=true
+            --set metrics.enabled=true
+            --set autoscaling.maxReplicas=5
+            --set autoscaling.minReplicas=2
+            --set autoscaling.enabled=true
             --namespace kube-system
             -f ${MANIFEST_PATH}/nginx-values.yaml  
       deploy-nginx-ingress-alb:
