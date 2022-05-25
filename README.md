@@ -27,10 +27,6 @@ Infrastructure is a tool to manage cloud infrastructure and IAM roles to support
       # mac
     brew install helm
     
-    # 3. Add helm repo
-    helm repo add hkube http://hkube.io/helm/
-    helm repo add bitnami https://charts.bitnami.com/bitnami
-
 ## usage
 
 1. Create tenant-settings repository. The repo must contain one or more folders, each containing its own .env file
@@ -50,7 +46,7 @@ Infrastructure is a tool to manage cloud infrastructure and IAM roles to support
     - `neulabs infra -t deployer terraform-eks-deploy-role` (req.) Creates the role to access the cluster (usable from terminal or to run deployment pipelines)
     - `neulabs infra -t eks create-cluster kubeconfig` (req.) Creates the eks cluster and profiles by associating the fargate roles (created earlier), and then, creates the certificate to access the cluster
     - `neulabs infra -t oidc associate-iam-oidc-provider` (req.) Creates the bridge between the eks cluster and the aws API
-    - `neulabs infra -t albic create-iam-service-account deploy` (req.) Creates the policy in the service account that will allow the ALB Controller to create ALBs on AWS for each ingress (deployed to the cluster and requiring an ALB). It then deploys the ALB Controller pod to the cluster (in the kube-system namespace)
+    - `neulabs infra -t albic create-iam-service-account create-addo deploy` (req.) Creates the policy in the service account that will allow the ALB Controller to create ALBs on AWS for each ingress (deployed to the cluster and requiring an ALB). It then deploys the ALB Controller pod to the cluster (in the kube-system namespace)
     - `neulabs infra -t nxic deploy` (req.) Creates the nginx ingress controller and the nginx backend (the load balancer). Whenever an ingress of with nginx annotation is added to the cluster the nginx ingress controller updates the nginx backend. 
     - `neulabs infra -t ddsa create-iam-service-account deploy` (req.) Creates the service account to stream cluster metrics to datadog. It then deploys a pod called metrics-server which is used to collect metrics from pods and containers on the cluster.
 - destroy sequence

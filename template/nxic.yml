@@ -22,6 +22,7 @@ targets:
             bitnami/nginx-ingress-controller
             --version 9.2.0
             --set-string service.externalTrafficPolicy=Local
+            --set service.type=NodePort
             --set containerSecurityContext.allowPrivilegeEscalation=false
             --set publishService.enabled=true
             --set serviceAccount.create=true
