@@ -2,8 +2,7 @@ version: "1"
 
 env:
   VPC_CIDR_BLOCK: ${VPC_CIDR_BLOCK}
-  TERRAFORM_MODULE: ${AZIONA_TERRAFORM_MODULES_PATH}/aziona-cli-terraform/modules/vpc
-
+  
 options:
   interpolation: true
   session_clean_before: False

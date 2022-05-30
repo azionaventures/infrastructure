@@ -2,7 +2,7 @@ version: "1"
 env:
   AWS_REGION: ${EKS_AWS_REGION}
   BUCKET_REGION: ${AWS_BUCKET_REGION}
-  TERRAFORM_MODULE: modules/eks-deploy-role
+  TERRAFORM_MODULE: ${AZIONA_TERRAFORM_MODULES_PATH}/aziona-terraform-modules/modules/eks-deploy-role
 
 targets:
   terraform-eks-deploy-role:
