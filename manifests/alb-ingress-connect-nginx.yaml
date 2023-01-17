@@ -17,6 +17,9 @@ spec:
     - http: 
         paths: 
           - backend: 
-              serviceName: nginx-ingress-controller 
-              servicePort: 80 
-            path: /* 
+              service:
+                name: nginx-ingress-controller 
+                port:
+                  number: 80
+            path: /*
+            pathType: Prefix
