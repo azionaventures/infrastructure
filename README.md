@@ -39,27 +39,32 @@ Infrastructure is a tool to manage cloud infrastructure and IAM roles to support
     name: terraform-lock
     partition: LockID
 5. Run the commands sequentially:
-- `source neulabs-activate -e ENV -c COMAPNY --aws-profile AWS_PROFILE --without-cert`
+- `source aziona-activate -e ENV -c COMAPNY --aws-profile AWS_PROFILE --env-only`
 - `export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile AWS_PROFILE)`
 - `export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile AWS_PROFILE)`
 - init sequence
-    - `neulabs infra sts assume-role` (optional) Assume the role that has the following Policy ...  
-    - `neulabs infra -t vpc vpc-create` (req.) Creates the VPC for managing the Multi-AZ cluster.
-    - `neulabs infra -t fargate create-role` (req.) Creates the fargate role with policy (default aws) AmazonEKSFargatePodExecutionRolePolicy
-    - `neulabs infra -t deployer terraform-eks-deploy-role` (req.) Creates the role to access the cluster (usable from terminal or to run deployment pipelines)
-    - `neulabs infra -t eks create-cluster kubeconfig` (req.) Creates the eks cluster and profiles by associating the fargate roles (created earlier), and then, creates the certificate to access the cluster
-    - `neulabs infra -t oidc associate-iam-oidc-provider` (req.) Creates the bridge between the eks cluster and the aws API
-    - `neulabs infra -t albic create-iam-service-account deploy` (req.) Creates the policy in the service account that will allow the ALB Controller to create ALBs on AWS for each ingress (deployed to the cluster and requiring an ALB). It then deploys the ALB Controller pod to the cluster (in the kube-system namespace)
-    - `neulabs infra -t nxic deploy` (req.) Creates the nginx ingress controller and the nginx backend (the load balancer). Whenever an ingress of with nginx annotation is added to the cluster the nginx ingress controller updates the nginx backend. 
-    - `neulabs infra -t ddsa create-iam-service-account deploy` (req.) Creates the service account to stream cluster metrics to datadog. It then deploys a pod called metrics-server which is used to collect metrics from pods and containers on the cluster.
+    - `aziona-infra sts assume-role` (optional) Assume the role that has the following Policy ...  
+    -  `export AZIONA_WORKSPACE_INFRASTRUCTURE=/Users/fabiobianchi/projects/infrastructure`
+    -  `export INFRASTRUCTURE_PATH=/Users/fabiobianchi/projects/infrastructure`
+    - `aziona-infra -t vpc vpc-create` (req.) Creates the VPC for managing the Multi-AZ cluster.
+    - `aziona-infra -t fargate create-role` (req.) Creates the fargate role with policy (default aws) 
+    - `aziona-infra -t deployer terraform-eks-deploy-role` (req.) Creates the role to access the cluster (usable from terminal or to run deployment pipelines)
+    - `aziona-infra -t eks create-cluster kubeconfig` (req.) Creates the eks cluster and profiles by associating the fargate roles (created earlier), and then, creates the certificate to access the cluster
+    - `aziona-infra -t oidc associate-iam-oidc-provider` (req.) Creates the bridge between the eks cluster and the aws API
+    - `aziona-infra -t albic create-iam-service-account` (req.) Creates the policy in the service account that will allow the ALB Controller to create ALBs on AWS for each ingress (deployed to the cluster and requiring an ALB). It then deploys the ALB Controller pod to the cluster (in the kube-system namespace)
+    - `kubectl apply -k "github.com/aws/eks-charts/stable/aws-load-balancer-controller//crds?ref=master"`
+    - `helm upgrade -i aws-load-balancer-controller eks/aws-load-balancer-controller -n kube-system --set clusterName=mirta-eks-1-23 --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller --set region=eu-west-1 --set vpcId=vpc-01bb3e0ca9f29f716 --set image.repository=602401143452.dkr.ecr.eu-west-1.amazonaws.com/amazon/aws-load-balancer-controller -f manifests/alb-ingress-controller-v2.4.4.yml`
+    - `aziona-infra -t nxic deploy` (req.) Creates the nginx ingress controller and the nginx backend (the load balancer). Whenever an ingress of with nginx annotation is added to the cluster the nginx ingress controller updates the nginx backend. 
+    - `aziona-infra -t ddsa create-iam-service-account deploy` (req.) Creates the service account to stream cluster metrics to datadog. It then deploys a pod called metrics-server which is used to collect metrics from pods and containers on the cluster.
 - destroy sequence
-    - `neulabs infra -t ddsa delete delete-iam-service-account`
-    - `neulabs infra -t nxic delete`
-    - `neulabs infra -t albic delete delete-iam-service-account` 
-    - `neulabs infra -t eks delete-cluster`
-    - `neulabs infra -t deployer terraform-eks-destroy-role`
-    - `neulabs infra -t fargate delete-role`
-    - `neulabs infra -t vpc vpc-destroy`
+    - `aziona-infra -t ddsa delete delete-iam-service-account`
+    - `aziona-infra -t nxic delete`
+    - `helm uninstall aws-load-balancer-controller -n kube-system`
+    - `aziona-infra -t albic delete-iam-service-account` 
+    - `aziona-infra -t eks delete-cluster`
+    - `aziona-infra -t deployer terraform-eks-destroy-role`
+    - `aziona-infra -t fargate delete-role`
+    - `aziona-infra -t vpc vpc-destroy`
 
 
 

@@ -4,8 +4,8 @@ version: "1"
 env:
   MANIFEST_PATH: ${INFRASTRUCTURE_PATH}/manifests
   POLICIES_PATH: ${INFRASTRUCTURE_PATH}/policies
-  POLICY_NAME: AWSLoadBalancerControllerIAMPolicy
-  INGRESS_CONTROLLER_ROLE: alb-ingress-controller
+  POLICY_NAME: AWSLoadBalancerControllerIAMPolicyV122
+  INGRESS_CONTROLLER_ROLE: aws-load-balancer-controller
 
 options:
   interpolation: true
@@ -87,7 +87,7 @@ targets:
             --name ${EKS_CLUSTER_NAME}
         after:
           deploy: | 
-            cat ${MANIFEST_PATH}/alb-ingress-controller-v1.1.4.yml \
+            cat ${MANIFEST_PATH}/alb-ingress-controller-v2.4.4.yml \
             | sed "s/# - --cluster-name=devCluster/- --cluster-name=${EKS_CLUSTER_NAME}/g" \
             | sed "s/# - --aws-region=us-west-1/- --aws-region=${EKS_AWS_REGION}/g" \
             | sed "s/# - --aws-vpc-id=vpc-xxxxxx/- --aws-vpc-id=${AWS_VPC_ID}/g" \
@@ -100,5 +100,5 @@ targets:
         args: 
           --manifest-path: ${MANIFEST_PATH}
           --manifest-yaml: 
-            - alb-ingress-controller-v1.1.4.yml
+            - alb-ingress-controller-v2.4.4.yml
           --action: delete 

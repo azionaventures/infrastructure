@@ -1,16 +1,16 @@
 controller: 
   extraArgs: 
     http-port: 8080 
-    https-port: 8443 
+    https-port: 8081 
   containerPort: 
     http: 8080 
-    https: 8443 
+    https: 8081 
   service: 
     ports: 
       http: 80 
       https: 443 
     targetPorts: 
       http: 8080 
-      https: 8443 
+      https: 8081 
   image: 
     allowPrivilegeEscalation: false

@@ -11,6 +11,15 @@ options:
 
 # helm repo add hkube http://hkube.io/helm/
 targets:
+  test:
+    stages:
+      deploy-nginx-ingress-alb:
+        module: aziona.packages.kubernetes.kubeaction
+        args: 
+          --manifest-path: ${MANIFEST_PATH}
+          --manifest-yaml: 
+            - alb-ingress-connect-nginx.yaml
+          --action: apply 
   deploy:
     stages:
       deploy-nginx-ingress-controller:
@@ -18,9 +27,9 @@ targets:
         args:
           --action: upgrade
           --action-args: |
-            -i nginx-ingress 
-            hkube/nginx-ingress
-            --version 1.31.1001
+            -i ingress-nginx
+            ingress-nginx/ingress-nginx
+            --version 4.2.3
             --set-string controller.service.externalTrafficPolicy=Local
             --set-string controller.service.type=NodePort
             --set controller.publishService.enabled=true
@@ -34,6 +43,7 @@ targets:
             --set controller.autoscaling.maxReplicas=5
             --set controller.autoscaling.minReplicas=2
             --set controller.autoscaling.enabled=true
+            --set controller.admissionWebhooks.enabled=false
             --namespace kube-system
             -f ${MANIFEST_PATH}/nginx-values.yaml  
       deploy-nginx-ingress-alb:
@@ -50,7 +60,7 @@ targets:
         args:
           --action: uninstall
           --action-args: |
-            nginx-ingress 
+            ingress-nginx
             --namespace kube-system
       delete-nginx-ingress-alb:
         module: aziona.packages.kubernetes.kubeaction
